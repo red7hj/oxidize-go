@@ -2,12 +2,13 @@ package mining
 
 import (
 	"fmt"
+	"math"
 	"testing"
 
 	"github.com/tclchiam/block_n_go/blockchain/entity"
 )
 
-const unexpectedResultStr = "calculateHash #%d got: %s, want: %s"
+const unexpectedResultStr = "calculateHash #%d got: %s with nonce %d, want: %s with nonce %d"
 
 func TestCalculateBlockHash(t *testing.T) {
 	tests := []struct {
@@ -62,7 +63,17 @@ func calculateBlockHashTestSuite(input *BlockHashingInput, nonce uint64, output 
 	result := CalculateBlockHash(input, nonce)
 
 	if !output.IsEqual(result) {
-		return fmt.Errorf(unexpectedResultStr, index, result, output)
+		validNonce := uint64(0)
+
+		for ; validNonce < math.MaxUint64; validNonce++ {
+			result := CalculateBlockHash(input, validNonce)
+
+			if HasDifficulty(result, input.Difficulty) {
+				break
+			}
+		}
+
+		return fmt.Errorf(unexpectedResultStr, index, result, validNonce, output, nonce)
 	}
 
 	return nil

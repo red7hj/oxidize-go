@@ -24,6 +24,7 @@ type BlockHeader struct {
 	Nonce            uint64
 	Hash             *Hash
 	Difficulty       uint64
+	LatestUTXO       *Hash
 }
 
 var GenesisParentHeader = BlockHeader{Index: math.MaxUint64, Hash: &EmptyHash, Difficulty: genesisDifficulty}
